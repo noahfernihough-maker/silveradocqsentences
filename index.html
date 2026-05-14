@@ -1,383 +1,419 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Silverado CQ Sentences</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {font-family: "Poppins", sans-serif; margin: 0; padding: 20px; background-color: white;}
-        .card { background: rgb(255, 200, 98); padding: 20px; max-width: 900px; margin: 20px auto; border-radius: 8px;
-                box-shadow: 0 2px 6px rgba(0,0,0,0.1); transition: background-color 2s ease}
-        label { margin-top: 10px; display: block; font-weight: bold; }
-        input, select { width: 100%; padding: 8px; margin-top: 4px; border-radius: 4px; border: 1px solid #ccc; }
-        button { padding: 10px 16px; background: #0077cc; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 12px; }
-        button:hover { background: #005fa3; }
-        .person-block { padding: 12px; background: #fafafa; border-radius: 6px; border: 1px solid #ddd; margin-top: 12px; }
-        .sentence { margin: 8px 0; line-height: 1.4; }
-        h3 { margin-top: 16px; }
-        .hero-photo {display: block; width: 100%; max-width: 900px; margin: 20px auto; border-radius: 14px; box-shadow: 0 6px 14px rgba(0,0,0,0.2); filter: sepia(15%) saturate(1.15) contrast(1.05);}
-    </style>
+<meta charset="UTF-8">
+<title>Silverado CQ Sentences</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body {font-family:"Poppins",sans-serif;margin:0;padding:20px;background-color:white;}
+.card {background:rgb(255,200,98);padding:20px;max-width:900px;margin:20px auto;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.1);transition:background-color 2s ease;}
+label {margin-top:10px;display:block;font-weight:bold;}
+input,select {width:100%;padding:8px;margin-top:4px;border-radius:4px;border:1px solid #ccc;box-sizing:border-box;}
+button {padding:10px 16px;background:#0077cc;color:white;border:none;border-radius:4px;cursor:pointer;margin-top:12px;}
+button:hover {background:#005fa3;}
+.person-block {padding:12px;background:#fafafa;border-radius:6px;border:1px solid #ddd;margin-top:12px;}
+.sentence {margin:8px 0;line-height:1.4;}
+h3 {margin-top:16px;}
+.hero-photo {display:block;width:100%;max-width:900px;margin:20px auto;border-radius:14px;box-shadow:0 6px 14px rgba(0,0,0,0.2);filter:sepia(15%) saturate(1.15) contrast(1.05);}
+.output-block {background:white;padding:18px;border-radius:10px;margin-bottom:20px;text-align:center;}
+.cabin-title {text-align:center;margin-bottom:14px;}
+.reminder-text{font-size:14px;font-weight:600;color:#c0392b;margin-top:-8px;margin-bottom:18px;}
+</style>
 </head>
 <body>
 
 <h1 style="text-align:center;">Silverado CQ Sentences</h1>
 
 <div class="card">
-    <label>Gender of Cluster:</label>
-    <select id="groupGender">
-        <option value="" selected disabled>Select</option>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-    </select>
+<label>Gender of Cluster:</label>
+<select id="groupGender">
+<option value="" selected disabled>Select</option>
+<option value="male">Male</option>
+<option value="female">Female</option>
+</select>
 
-    <label>How Many Cabins?</label>
-    <input type="number" id="numCabins" min="1">
+<label>Cluster:</label>
+<select id="clusterName">
+<option value="" selected disabled>Select Gender First</option>
+</select>
 
-    <div id="cabinConfig"></div>
+<label>How Many Cabins?</label>
+<input type="number" id="numCabins" min="1">
 
-    <button id="createFormBtn">Create Form</button>
+<div id="cabinConfig"></div>
+
+<button id="createFormBtn">Create Form</button>
 </div>
 
 <img src="Wag26.jpeg" alt="Silverado" class="hero-photo" id="introPhoto">
 
 <div class="card" id="formContainer" style="display:none;">
-    <h2>Enter Names & Qualities</h2>
-    <form id="peopleForm">
-        <div id="peopleFields"></div>
-        <button type="submit">Generate Sentences</button>
-    </form>
+<h2>Enter Names & CQs</h2>
+<form id="peopleForm">
+<div id="peopleFields"></div>
+<button type="submit">Generate Sentences</button>
+</form>
 </div>
 
 <div class="card" id="outputCard" style="display:none;">
-    <h2>Generated Sentences</h2>
-    <div id="sentencesContainer"></div>
+<h2>Generated Sentences</h2>
+
+<p class="reminder-text">
+  Reminder: Double check name capitalization/spelling before copying!
+</p><div id="sentencesContainer"></div>
 </div>
 
 <script>
-    const ALLOWED_QUALITIES = [
-      "adaptable","adventurous","agreeable","amiable","analytical",
-      "aspiring","attentive","authentic","bold","brave",
-      "capable","clever","compassionate","confident","conscientious",
-      "considerate","consistent","content","cooperative","courageous",
-      "courteous","creative","dedicated","deep","dependable",
-      "determined","devoted","diligent","discerning","eager",
-      "efficient","empathetic","encouraging","enduring","engaging",
-      "enthusiastic","expressive","faithful","firm","flexible",
-      "forthright","friendly","generous","gentle","gracious","grateful",
-      "gregarious","helpful","honest","honorable","hopeful",
-      "hospitable","humble","imaginative","insightful","intentional",
-      "joyful","kind","listener","loving","loyal","mature",
-      "nurturing","obedient","optimistic","patient","peacemaker",
-      "perceptive","persistent","polite","precise","realistic",
-      "relaxed","reliable","resourceful","respectful","responsible",
-      "reverent","self-control","selfless","self-starter","sincere",
-      "steadfast","strong","submissive","supportive","sympathetic",
-      "tactful","teachable","tenacious","thankful","thorough",
-      "thoughtful","tolerant","trustworthy","truthful","understanding",
-      "uplifting","virtuous","wise"
-    ];
+const CLUSTERS_BY_GENDER = {
+male:["Rustler","Bonanza","Stampede","Mustang","Tumbleweed","Winchester"],
+female:["Wildflower","Bluebonnet","Magnolia","Rosebud","Sunflower","Daisy"]
+};
 
-    const DISALLOWED_BY_GENDER = {
-        male: ["loving","nurturing","gentle","submissive"],
-        female: ["strong"]
-    };
+const ALLOWED_QUALITIES = [
+"adaptable","adventurous","agreeable","amiable","analytical",
+"aspiring","attentive","authentic","bold","brave",
+"capable","clever","compassionate","confident","conscientious",
+"considerate","consistent","content","cooperative","courageous",
+"courteous","creative","dedicated","deep","dependable",
+"determined","devoted","diligent","discerning","eager",
+"efficient","empathetic","encouraging","enduring","engaging",
+"enthusiastic","expressive","faithful","firm","flexible",
+"forthright","friendly","generous","gentle","gracious","grateful",
+"gregarious","helpful","honest","honorable","hopeful",
+"hospitable","humble","imaginative","insightful","intentional",
+"joyful","kind","listener","lovable","loyal","mature",
+"nurturing","obedient","optimistic","patient","peacemaker",
+"perceptive","persistent","polite","precise","realistic",
+"relaxed","reliable","resourceful","respectful","responsible",
+"reverent","self-control","selfless","self-starter","sincere",
+"steadfast","strong","submissive","supportive","sympathetic",
+"tactful","teachable","tenacious","thankful","thorough",
+"thoughtful","transparent","tolerant","trustworthy","truthful","understanding",
+"uplifting","virtuous","wise"
+];
 
-    const QUALITY_TEMPLATES = {
-      adaptable:{first:"{name} is adaptable, adjusting to new situations with ease.",second:"His adaptable nature is seen in the way he adjusts to difficulties."},
-      adventurous:{first:"{name} is adventurous, seeking out new experiences.",second:"His adventurous spirit is evident in the way he seeks new experiences."},
-      agreeable:{first:"{name} is agreeable, ready and willing to consent.",second:"His agreeable nature is seen in the way he submits to others around him."},
-      amiable:{first:"{name} is amiable, relating to others through honesty.",second:"His amiable nature is seen in the way he honestly relates to others."},
-      analytical:{first:"{name} is analytical, easily understanding new ideas.",second:"His analytical nature is evident in the way he breaks down difficult concepts."},
-      aspiring:{first:"{name} is aspiring, possessing a desire to accomplish great things.",second:"His aspiring nature allows him to go above and beyond to achieve greatness."},
-      attentive:{first:"{name} is attentive, expressing another's value by focusing on them in conversations.",second:"His attentive nature is evident in the way he focuses on people's words in conversations."},
-      authentic:{first:"{name} is authentic, remaining true to himself regardless of the situation.",second:"His authenticity is evident in the way he remains himself regardless of the situation."},
-      bold:{first:"{name} is bold, facing new situations with confidence.",second:"His boldness is seen in the way he leads his peers."},
-      brave:{first:"{name} is brave, showing resilience in the face of different circumstances.",second:"His brave spirit is evident in the way he faces challenges head on."},
-      capable:{first:"{name} is capable, possessing the power to complete tasks.",second:"His capable nature is seen in the way he completes the tasks at hand."},
-      clever:{first:"{name} is clever, thinking outside of the box to solve problems.",second:"His clever nature is seen in the way he thinks outside the box."},
-      compassionate:{first:"{name} is compassionate, responding to difficult situations with sympathy.",second:"His compassionate nature is evident in the way he sees people’s needs."},
-      confident:{first:"{name} is confident, believing in himself and his abilities.",second:"His confidence is evident in the way he leads through his strengths."},
-      conscientious:{first:"{name} is conscientious, taking great care of the details.",second:"His conscientious nature is evident in the way he tends to the details."},
-      considerate:{first:"{name} is considerate, perceiving the feelings of those around him.",second:"His considerate nature is evident in his attention to the feelings of those around him."},
-      consistent:{first:"{name} is consistent, acting in a way that matches his words.",second:"His consistent nature is evident in the way his words match his actions."},
-      content:{first:"{name} is content, satisfied regardless of his circumstances.",second:"His content nature is shown in his satisfaction in different circumstances."},
-      cooperative:{first:"{name} is cooperative, putting the needs of the group before his own.",second:"His cooperative nature is evident in the way he works well with others."},
-      courageous:{first:"{name} is courageous, making decisions in the face of fear.",second:"His courageous nature is seen in the way he excels through challenges."},
-      courteous:{first:"{name} is courteous, considering how his actions will impact others.",second:"His courteous nature is evident in the way he thinks about how his actions will impact others."},
-      creative:{first:"{name} is creative, seeing things not yet tangible.",second:"His creative personality is evident in the way he contributes new thoughts and ideas."},
-      dedicated:{first:"{name} is dedicated, showing perseverance through activities.",second:"His dedication is evident in the way he perseveres through activities."},
-      deep:{first:"{name} is deep, relating to others in a meaningful way.",second:"His depth is evident in the way he asks meaningful questions."},
-      dependable:{first:"{name} is dependable, able to be relied on when given a task.",second:"His dependable nature is evident in his reliability when given a task."},
-      determined:{first:"{name} is determined, moving forward despite unfavorable conditions.",second:"His determination is evident in his ability to accomplish the goals set before him."},
-      devoted:{first:"{name} is devoted, staying fiercely loyal in friendships.",second:"His devoted nature is evident in the way he remains loyal to his peers and leaders."},
-      diligent:{first:"{name} is diligent, applying consistent effort to the tasks in front of him.",second:"His diligence is seen in how he consistently applies effort."},
-      discerning:{first:"{name} is discerning, perceiving between good and evil.",second:"His discernment is evident in the way he sees right from wrong."},
-      eager:{first:"{name} is eager, quick to feel excitement.",second:"His eagerness is evident in the way he quickly gets excited."},
-      efficient:{first:"{name} is efficient, using the resources around him to fulfill tasks.",second:"His efficiency is evident in the way he creatively fulfills obligations."},
-      empathetic:{first:"{name} is empathetic, able to relate to others' feelings.",second:"His empathetic nature is seen in the way he relates to what others are feeling."},
-      encouraging:{first:"{name} is encouraging, recognizing the best in others and telling them.",second:"His encouraging nature is seen in the way he is quick to build others up with his words."},
-      enduring:{first:"{name} is enduring, standing firm in varying circumstances.",second:"His enduring nature is evident in the way he holds fast in varying circumstances."},
-      engaging:{first:"{name} is engaging, bringing others into conversations and befriending them.",second:"His engaging personality is seen in the way he easily befriends those around him."},
-      enthusiastic:{first:"{name} is enthusiastic, expressing a visible passion when engaging in activities.",second:"His enthusiasm is evident in the way he visibly expresses passion when engaging in activities."},
-      expressive:{first:"{name} is expressive, vividly sharing who he is through his words and actions.",second:"His expressive nature is evident in the way he vividly presents how he is feeling."},
-      faithful:{first:"{name} is faithful, able to be depended on to complete tasks.",second:"His faithful nature is evident in the way he is dependable to complete tasks."},
-      firm:{first:"{name} is firm, holding fast to what he believes in.",second:"His firm nature is evident in the way he holds fast to his beliefs."},
-      flexible:{first:"{name} is flexible, easily adapting to the situation at hand.",second:"His adaptable nature is seen in the way he adjusts to difficulties."},
-      forthright:{first:"{name} is forthright, speaking openly and acting with boldness.",second:"His forthright nature is seen in the way he boldly speaks up in a group."},
-      friendly:{first:"{name} is friendly, seizing opportunities to know others.",second:"His friendly nature is seen in the way he seizes opportunities to know others."},
-      generous:{first:"{name} is generous, willingly sharing his possessions with others.",second:"His generous nature is seen in the way he willingly gives to others."},
-      gentle:{first:"{name} is gentle, treating others with kindness and care.",second:"His gentle nature is evident in the way he responds softly to those around him."},
-      gracious:{first:"{name} is gracious, showing kindness to others in difficult circumstances.",second:"His gracious nature is evident in the way he is favorable to others in difficult circumstances."},
-      grateful:{first:"{name} is grateful, expressing appreciation for the gifts he has been given.",second:"His grateful nature is seen in the way he expresses appreciation for the things around."},
-      gregarious:{first:"{name} is gregarious, cultivating an exciting atmosphere.",second:"His gregarious nature is evident in the way he thrives off the energy of those around him."},
-      helpful:{first:"{name} is helpful, actively looking for ways to serve the people around him.",second:"His helpful nature is evident in the way he actively looks to serve those around him."},
-      honest:{first:"{name} is honest, speaking in truth regardless of circumstance.",second:"His honest nature is seen in the way he speaks the truth regardless of the situation."},
-      honorable:{first:"{name} is honorable, approaching situations with integrity.",second:"His honorable nature is evident in the way he maintains his integrity in different situations."},
-      hopeful:{first:"{name} is hopeful, finding the best in each situation.",second:"His hopeful nature is evident in the way he looks for the positives in situations."},
-      hospitable:{first:"{name} is hospitable, making others feel welcome in his presence.",second:"His hospitable nature is evident in the way he welcomes others in."},
-      humble:{first:"{name} is humble, accurately recognizing his strengths.",second:"His humble nature is evident in the way he understands his strengths and walks in them."},
-      imaginative:{first:"{name} is imaginative, bringing new ideas and perspectives.",second:"His imaginative nature is seen in the way he brings new ideas to discussions."},
-      insightful:{first:"{name} is insightful, comprehending difficult concepts.",second:"His insightful nature enables him to bring difficult concepts to light."},
-      intentional:{first:"{name} is intentional, speaking and acting with purpose.",second:"His intentional nature is seen in the way he thinks about the outcome before he acts."},
-      joyful:{first:"{name} is joyful, bringing light and happiness to his peers.",second:"His joyful nature is evident in the way he brings happiness to those around him."},
-      kind:{first:"{name} is kind, thinking about ways to care for others.",second:"His kindness is evident in the way he desires what’s best for others."},
-      listener:{first:"{name} is a listener, freely giving his attention to others.",second:"His listening ear is evident in the way he is attentive when others are speaking."},
-      loving:{first:"{name} is loving, freely showing care to those around him.",second:"His loving nature is evident in the way he consistently shows care to others."},
-      loyal:{first:"{name} is loyal, holding to the commitments made to others.",second:"His loyalty is seen in the way he fulfills the obligations he committed to."},
-      mature:{first:"{name} is mature, having a great understanding of himself.",second:"His maturity is evident in his understanding of himself."},
-      nurturing:{first:"{name} is nurturing, fostering life and growth in his peers.",second:"His nurturing nature is seen in the way he fosters growth in his friends."},
-      obedient:{first:"{name} is obedient, listening to and following instructions well.",second:"His obedience is evident in the way he listens and follows instructions."},
-      optimistic:{first:"{name} is optimistic, maintaining a positive attitude.",second:"His optimistic nature is seen in the way he finds the best in circumstances."},
-      patient:{first:"{name} is patient, taking time to care for those around him.",second:"His patient nature is seen in the way he takes time to care for those around him."},
-      peacemaker:{first:"{name} is a peacemaker, intentionally decreasing conflict in those around him.",second:"His peacemaking nature is seen in the way he intentionally defuses conflict around him."},
-      perceptive:{first:"{name} is perceptive, seeing beyond the obvious truths.",second:"His perceptive nature is evident in the way he sees beyond the obvious truths."},
-      persistent:{first:"{name} is persistent, continually applying himself to the task at hand.",second:"His persistence is evident in the way he continually applies himself to the tasks at hand."},
-      polite:{first:"{name} is polite, considering others before himself.",second:"His polite nature is seen in the way he considers others before himself."},
-      precise:{first:"{name} is precise, caring for the small details in a task.",second:"His precise nature is seen in the way he cares for the small details."},
-      realistic:{first:"{name} is realistic, having an accurate view of the world.",second:"His realistic nature is evident in the way he accurately views the world."},
-      relaxed:{first:"{name} is relaxed, putting those around him at ease.",second:"His relaxed nature is evident in the way he puts others at ease."},
-      reliable:{first:"{name} is reliable, able to be depended on for his commitments.",second:"His reliable nature is evident in the way he handles difficult tasks."},
-      resourceful:{first:"{name} is resourceful, finding clever ways to accomplish tasks.",second:"His resourcefulness is evident in the way he cleverly accomplishes tasks."},
-      respectful:{first:"{name} is respectful, regarding others position and value.",second:"His respectful nature is seen in the way he regards other's value."},
-      responsible:{first:"{name} is responsible, able to handle difficult tasks.",second:"His responsible personality is evident in how he holds himself accountable."},
-      reverent:{first:"{name} is reverent, showing a deep respect for what is sacred.",second:"His reverence is seen in his respect towards the sacred."},
-      "self-control":{first:"{name} has self-control, knowing his strength and applying it with grace.",second:"His self-control is evident in his graceful application of his strength."},
-      selfless:{first:"{name} is selfless, placing the needs of others before his own.",second:"His selfless nature is evident in the way he places the needs of others before himself."},
-      "self-starter":{first:"{name} is a self-starter, taking initiative to complete tasks.",second:"His self-starting nature is seen in the way he takes initiative to complete tasks."},
-      sincere:{first:"{name} is sincere, meaning what he says.",second:"His sincerity is evident in the way he speaks about others."},
-      steadfast:{first:"{name} is steadfast, holding firm to what he believes.",second:"His steadfast nature is seen in the way he holds firm in what he believes."},
-      strong:{first:"{name} is strong, supporting those around him.",second:"His strength is evident in the way he supports those around him."},
-      submissive:{first:"{name} is submissive, willingly placing himself under authority.",second:"His submissive nature is seen in the way he willingly places himself under authority."},
-      supportive:{first:"{name} is supportive, uplifting those around him with his words.",second:"His supportive nature is evident in the way he uplifts others."},
-      sympathetic:{first:"{name} is sympathetic, relating to others' emotions.",second:"His sympathy is evident in the way he feels others' emotions."},
-      tactful:{first:"{name} is tactful, skillfully doing what is required of him.",second:"His tactful nature is evident in his willingness to do what’s needed."},
-      teachable:{first:"{name} is teachable, seeking to grow and learn.",second:"His teachable nature is seen in the way he continually seeks to grow."},
-      tenacious:{first:"{name} is tenacious, holding fast to what he sets his mind to.",second:"His tenacity is evident in the way he holds fast to what he sets his mind to."},
-      thankful:{first:"{name} is thankful, quick to express gratitude.",second:"His thankfulness is seen in the way he expressives gratitude."},
-      thorough:{first:"{name} is thorough, taking time to care for the details.",second:"His thorough nature is evident in the way he tends to the details of a task."},
-      thoughtful:{first:"{name} is thoughtful, carefully considering the needs of others.",second:"His thoughtfulness is seen in the way he considers the needs of others."},
-      tolerant:{first:"{name} is tolerant, enduring difficulties with joy.",second:"His tolerant nature is evident in the way he endures difficulties with joy."},
-      trustworthy:{first:"{name} is trustworthy, consistently taking care of his obligations.",second:"His trustworthy nature is evident in the way he consistently takes care of what he is responsible for."},
-      truthful:{first:"{name} is truthful, accurately communicating what he believes.",second:"His truthful nature is seen in the way he accurately communicates what he believes."},
-      understanding:{first:"{name} is understanding, able to know where people are coming from.",second:"His understanding nature is evident in the way he relates to others with empathy."},
-      uplifting:{first:"{name} is uplifting, inspiring and offering hope to others.",second:"His uplifting nature is evident in the way he inspires others with his words."},
-      virtuous:{first:"{name} is virtuous, making morally right choices.",second:"His virtuous nature is seen in the way he makes morally right choices."},
-      wise:{first:"{name} is wise, possessing sound judgment.",second:"His wisdom is evident in the way he speaks with sound judgment."}
-    };
+const DISALLOWED_BY_GENDER = {
+male:["lovable","nurturing","gentle","submissive"],
+female:["strong"]
+};
 
-    function applyGender(text, gender) {
-      if (gender === "male") return text;
-      let t = text;
-      t = t.replace(/\bHis\b/g, "Her");
-      t = t.replace(/\bhis\b/g, "her");
-      t = t.replace(/\bHe\b/g, "She");
-      t = t.replace(/\bhe\b/g, "she");
-      t = t.replace(/\bhim\b/g, "her");
-      t = t.replace(/himself/g, "herself");
-      return t;
-    }
+const QUALITY_TEMPLATES = {
+adaptable:{first:"{name} is adaptable, adjusting to new situations with ease.",second:"His adaptable nature is seen in the way he adjusts to difficulties."},
+adventurous:{first:"{name} is adventurous, seeking out new experiences.",second:"His adventurous spirit is evident in the way he seeks new experiences."},
+agreeable:{first:"{name} is agreeable, ready and willing to consent.",second:"His agreeable nature is seen in the way he submits to others around him."},
+amiable:{first:"{name} is amiable, relating to others through honesty.",second:"His amiable nature is seen in the way he honestly relates to others."},
+analytical:{first:"{name} is analytical, easily understanding new ideas.",second:"His analytical nature is evident in the way he breaks down difficult concepts."},
+aspiring:{first:"{name} is aspiring, possessing a desire to accomplish great things.",second:"His aspiring nature allows him to go above and beyond to achieve greatness."},
+attentive:{first:"{name} is attentive, expressing another's value by focusing on them in conversations.",second:"His attentive nature is evident in the way he focuses on people's words in conversations."},
+authentic:{first:"{name} is authentic, remaining true to himself regardless of the situation.",second:"His authenticity is evident in the way he remains himself regardless of the situation."},
+bold:{first:"{name} is bold, facing new situations with confidence.",second:"His boldness is seen in the way he leads his peers."},
+brave:{first:"{name} is brave, showing resilience in the face of different circumstances.",second:"His brave spirit is evident in the way he faces challenges head on."},
+capable:{first:"{name} is capable, possessing the power to complete tasks.",second:"His capable nature is seen in the way he completes the tasks at hand."},
+clever:{first:"{name} is clever, thinking outside of the box to solve problems.",second:"His clever nature is seen in the way he thinks outside the box."},
+compassionate:{first:"{name} is compassionate, responding to difficult situations with sympathy.",second:"His compassionate nature is evident in the way he sees people’s needs."},
+confident:{first:"{name} is confident, believing in himself and his abilities.",second:"His confidence is evident in the way he leads through his strengths."},
+conscientious:{first:"{name} is conscientious, taking great care of the details.",second:"His conscientious nature is evident in the way he tends to the details."},
+considerate:{first:"{name} is considerate, perceiving the feelings of those around him.",second:"His considerate nature is evident in his attention to the feelings of those around him."},
+consistent:{first:"{name} is consistent, acting in a way that matches his words.",second:"His consistent nature is evident in the way his words match his actions."},
+content:{first:"{name} is content, satisfied regardless of his circumstances.",second:"His content nature is shown in his satisfaction in different circumstances."},
+cooperative:{first:"{name} is cooperative, putting the needs of the group before his own.",second:"His cooperative nature is evident in the way he works well with others."},
+courageous:{first:"{name} is courageous, making decisions in the face of fear.",second:"His courageous nature is seen in the way he excels through challenges."},
+courteous:{first:"{name} is courteous, considering how his actions will impact others.",second:"His courteous nature is evident in the way he thinks about how his actions will impact others."},
+creative:{first:"{name} is creative, seeing things not yet tangible.",second:"His creative personality is evident in the way he contributes new thoughts and ideas."},
+dedicated:{first:"{name} is dedicated, showing perseverance through activities.",second:"His dedication is evident in the way he perseveres through activities."},
+deep:{first:"{name} is deep, relating to others in a meaningful way.",second:"His depth is evident in the way he asks meaningful questions."},
+dependable:{first:"{name} is dependable, able to be relied on when given a task.",second:"His dependable nature is evident in his reliability when given a task."},
+determined:{first:"{name} is determined, moving forward despite unfavorable conditions.",second:"His determination is evident in his ability to accomplish the goals set before him."},
+devoted:{first:"{name} is devoted, staying fiercely loyal in friendships.",second:"His devoted nature is evident in the way he remains loyal to his peers and leaders."},
+diligent:{first:"{name} is diligent, applying consistent effort to the tasks in front of him.",second:"His diligence is seen in how he consistently applies effort."},
+discerning:{first:"{name} is discerning, perceiving between good and evil.",second:"His discernment is evident in the way he sees right from wrong."},
+eager:{first:"{name} is eager, quick to feel excitement.",second:"His eagerness is evident in the way he quickly gets excited."},
+efficient:{first:"{name} is efficient, using the resources around him to fulfill tasks.",second:"His efficiency is evident in the way he creatively fulfills obligations."},
+empathetic:{first:"{name} is empathetic, able to relate to others' feelings.",second:"His empathetic nature is seen in the way he relates to what others are feeling."},
+encouraging:{first:"{name} is encouraging, recognizing the best in others and telling them.",second:"His encouraging nature is seen in the way he is quick to build others up with his words."},
+enduring:{first:"{name} is enduring, standing firm in varying circumstances.",second:"His enduring nature is evident in the way he holds fast in varying circumstances."},
+engaging:{first:"{name} is engaging, bringing others into conversations and befriending them.",second:"His engaging personality is seen in the way he easily befriends those around him."},
+enthusiastic:{first:"{name} is enthusiastic, expressing a visible passion when engaging in activities.",second:"His enthusiasm is evident in the way he visibly expresses passion when engaging in activities."},
+expressive:{first:"{name} is expressive, vividly sharing who he is through his words and actions.",second:"His expressive nature is evident in the way he vividly presents how he is feeling."},
+faithful:{first:"{name} is faithful, able to be depended on to complete tasks.",second:"His faithful nature is evident in the way he is dependable to complete tasks."},
+firm:{first:"{name} is firm, holding fast to what he believes in.",second:"His firm nature is evident in the way he holds fast to his beliefs."},
+flexible:{first:"{name} is flexible, easily adapting to the situation at hand.",second:"His adaptable nature is seen in the way he adjusts to difficulties."},
+forthright:{first:"{name} is forthright, speaking openly and acting with boldness.",second:"His forthright nature is seen in the way he boldly speaks up in a group."},
+friendly:{first:"{name} is friendly, seizing opportunities to know others.",second:"His friendly nature is seen in the way he seizes opportunities to know others."},
+generous:{first:"{name} is generous, willingly sharing his possessions with others.",second:"His generous nature is seen in the way he willingly gives to others."},
+gentle:{first:"{name} is gentle, treating others with kindness and care.",second:"His gentle nature is evident in the way he responds softly to those around him."},
+gracious:{first:"{name} is gracious, showing kindness to others in difficult circumstances.",second:"His gracious nature is evident in the way he is favorable to others in difficult circumstances."},
+grateful:{first:"{name} is grateful, expressing appreciation for the gifts he has been given.",second:"His grateful nature is seen in the way he expresses appreciation for the things around."},
+gregarious:{first:"{name} is gregarious, cultivating an exciting atmosphere.",second:"His gregarious nature is evident in the way he thrives off the energy of those around him."},
+honest:{first:"{name} is honest, speaking in truth regardless of circumstance.",second:"His honest nature is seen in the way he speaks the truth regardless of the situation."},
+honorable:{first:"{name} is honorable, approaching situations with integrity.",second:"His honorable nature is evident in the way he maintains his integrity in different situations."},
+hopeful:{first:"{name} is hopeful, finding the best in each situation.",second:"His hopeful nature is evident in the way he looks for the positives in situations."},
+hospitable:{first:"{name} is hospitable, making others feel welcome in his presence.",second:"His hospitable nature is evident in the way he welcomes others in."},
+humble:{first:"{name} is humble, accurately recognizing his strengths.",second:"His humble nature is evident in the way he understands his strengths and walks in them."},
+imaginative:{first:"{name} is imaginative, bringing new ideas and perspectives.",second:"His imaginative nature is seen in the way he brings new ideas to discussions."},
+insightful:{first:"{name} is insightful, comprehending difficult concepts.",second:"His insightful nature enables him to bring difficult concepts to light."},
+intentional:{first:"{name} is intentional, speaking and acting with purpose.",second:"His intentional nature is seen in the way he thinks about the outcome before he acts."},
+joyful:{first:"{name} is joyful, bringing light and happiness to his peers.",second:"His joyful nature is evident in the way he brings happiness to those around him."},
+kind:{first:"{name} is kind, thinking about ways to care for others.",second:"His kindness is evident in the way he desires what’s best for others."},
+listener:{first:"{name} is a listener, freely giving his attention to others.",second:"His listening ear is evident in the way he is attentive when others are speaking."},
+lovable:{first:"{name} is lovable, freely showing care to those around him.",second:"His lovable nature is evident in the way he consistently shows care to others."},
+loyal:{first:"{name} is loyal, holding to the commitments made to others.",second:"His loyalty is seen in the way he fulfills the obligations he committed to."},
+mature:{first:"{name} is mature, having a great understanding of himself.",second:"His maturity is evident in his understanding of himself."},
+nurturing:{first:"{name} is nurturing, fostering life and growth in his peers.",second:"His nurturing nature is seen in the way he fosters growth in his friends."},
+obedient:{first:"{name} is obedient, listening to and following instructions well.",second:"His obedience is evident in the way he listens and follows instructions."},
+optimistic:{first:"{name} is optimistic, maintaining a positive attitude.",second:"His optimistic nature is seen in the way he finds the best in circumstances."},
+patient:{first:"{name} is patient, taking time to care for those around him.",second:"His patient nature is seen in the way he takes time to care for those around him."},
+peacemaker:{first:"{name} is a peacemaker, intentionally decreasing conflict in those around him.",second:"His peacemaking nature is seen in the way he intentionally defuses conflict around him."},
+perceptive:{first:"{name} is perceptive, seeing beyond the obvious truths.",second:"His perceptive nature is evident in the way he sees beyond the obvious truths."},
+persistent:{first:"{name} is persistent, continually applying himself to the task at hand.",second:"His persistence is evident in the way he continually applies himself to the tasks at hand."},
+polite:{first:"{name} is polite, considering others before himself.",second:"His polite nature is seen in the way he considers others before himself."},
+precise:{first:"{name} is precise, caring for the small details in a task.",second:"His precise nature is seen in the way he cares for the small details."},
+realistic:{first:"{name} is realistic, having an accurate view of the world.",second:"His realistic nature is evident in the way he accurately views the world."},
+relaxed:{first:"{name} is relaxed, putting those around him at ease.",second:"His relaxed nature is evident in the way he puts others at ease."},
+reliable:{first:"{name} is reliable, able to be depended on for his commitments.",second:"His reliable nature is evident in the way he handles difficult tasks."},
+resourceful:{first:"{name} is resourceful, finding clever ways to accomplish tasks.",second:"His resourcefulness is evident in the way he cleverly accomplishes tasks."},
+respectful:{first:"{name} is respectful, regarding others position and value.",second:"His respectful nature is seen in the way he regards other's value."},
+responsible:{first:"{name} is responsible, able to handle difficult tasks.",second:"His responsible personality is evident in how he holds himself accountable."},
+reverent:{first:"{name} is reverent, showing a deep respect for what is sacred.",second:"His reverence is seen in his respect towards the sacred."},
+"self-control":{first:"{name} has self-control, knowing his strength and applying it with grace.",second:"His self-control is evident in his graceful application of his strength."},
+selfless:{first:"{name} is selfless, placing the needs of others before his own.",second:"His selfless nature is evident in the way he places the needs of others before himself."},
+"self-starter":{first:"{name} is a self-starter, taking initiative to complete tasks.",second:"His self-starting nature is seen in the way he takes initiative to complete tasks."},
+sincere:{first:"{name} is sincere, meaning what he says.",second:"His sincerity is evident in the way he speaks about others."},
+steadfast:{first:"{name} is steadfast, holding firm to what he believes.",second:"His steadfast nature is seen in the way he holds firm in what he believes."},
+strong:{first:"{name} is strong, supporting those around him.",second:"His strength is evident in the way he supports those around him."},
+submissive:{first:"{name} is submissive, willingly placing himself under authority.",second:"His submissive nature is seen in the way he willingly places himself under authority."},
+supportive:{first:"{name} is supportive, uplifting those around him with his words.",second:"His supportive nature is evident in the way he uplifts others."},
+sympathetic:{first:"{name} is sympathetic, relating to others' emotions.",second:"His sympathy is evident in the way he feels others' emotions."},
+tactful:{first:"{name} is tactful, skillfully doing what is required of him.",second:"His tactful nature is evident in his willingness to do what’s needed."},
+teachable:{first:"{name} is teachable, seeking to grow and learn.",second:"His teachable nature is seen in the way he continually seeks to grow."},
+tenacious:{first:"{name} is tenacious, holding fast to what he sets his mind to.",second:"His tenacity is evident in the way he holds fast to what he sets his mind to."},
+thankful:{first:"{name} is thankful, quick to express gratitude.",second:"His thankfulness is seen in the way he expressives gratitude."},
+thorough:{first:"{name} is thorough, taking time to care for the details.",second:"His thorough nature is evident in the way he tends to the details of a task."},
+thoughtful:{first:"{name} is thoughtful, carefully considering the needs of others.",second:"His thoughtfulness is seen in the way he considers the needs of others."},
+tolerant:{first:"{name} is tolerant, enduring difficulties with joy.",second:"His tolerant nature is evident in the way he endures difficulties with joy."},
+transparent:{first:"{name} is transparent, willing to be open with others.",second:"His transparent nature is seen in the way he is able to be open with others."},
+trustworthy:{first:"{name} is trustworthy, consistently taking care of his obligations.",second:"His trustworthy nature is evident in the way he consistently takes care of what he is responsible for."},
+truthful:{first:"{name} is truthful, accurately communicating what he believes.",second:"His truthful nature is seen in the way he accurately communicates what he believes."},
+understanding:{first:"{name} is understanding, able to know where people are coming from.",second:"His understanding nature is evident in the way he relates to others with empathy."},
+uplifting:{first:"{name} is uplifting, inspiring and offering hope to others.",second:"His uplifting nature is evident in the way he inspires others with his words."},
+virtuous:{first:"{name} is virtuous, making morally right choices.",second:"His virtuous nature is seen in the way he makes morally right choices."},
+wise:{first:"{name} is wise, possessing sound judgment.",second:"His wisdom is evident in the way he speaks with sound judgment."}
+};
 
-    function formatName(raw) {
-      if (!raw) return "";
-      const trimmed = raw.trim();
-      return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
-    }
+function applyGender(text,gender){
+if(gender==="male") return text;
+let t=text;
+t=t.replace(/\bHis\b/g,"Her");
+t=t.replace(/\bhis\b/g,"her");
+t=t.replace(/\bHe\b/g,"She");
+t=t.replace(/\bhe\b/g,"she");
+t=t.replace(/\bhim\b/g,"her");
+t=t.replace(/himself/g,"herself");
+return t;
+}
 
-    function buildSentence(name, quality, gender, positionIndex) {
-      const entry = QUALITY_TEMPLATES[quality];
-      const raw = positionIndex === 2 ? entry.second : entry.first;
-      const withName = raw.replace(/{name}/g, name);
-      return applyGender(withName, gender);
-    }
+function formatName(raw){
+return raw.trim();
+}
 
-    function levenshtein(a, b) {
-        const dp = Array(a.length + 1).fill(null).map(() => Array(b.length + 1).fill(0));
-        for (let i = 0; i <= a.length; i++) dp[i][0] = i;
-        for (let j = 0; j <= b.length; j++) dp[0][j] = j;
-        for (let i = 1; i <= a.length; i++) {
-            for (let j = 1; j <= b.length; j++) {
-                dp[i][j] = a[i-1] === b[j-1]
-                    ? dp[i-1][j-1]
-                    : Math.min(
-                        dp[i-1][j] + 1,
-                        dp[i][j-1] + 1,
-                        dp[i-1][j-1] + 1
-                      );
-            }
-        }
-        return dp[a.length][b.length];
-    }
+function buildSentence(name,quality,gender,positionIndex){
+const entry=QUALITY_TEMPLATES[quality];
+const raw=positionIndex===2?entry.second:entry.first;
+const withName=raw.replace(/{name}/g,name);
+return applyGender(withName,gender);
+}
 
-    function correctQuality(input) {
-        const word = input.trim().toLowerCase();
-        if (ALLOWED_QUALITIES.includes(word)) return word;
-        let best = null;
-        let bestDist = Infinity;
-        for (const q of ALLOWED_QUALITIES) {
-            const dist = levenshtein(word, q);
-            if (dist < bestDist) {
-                bestDist = dist;
-                best = q;
-            }
-        }
-        return bestDist <= 2 ? best : null;
-    }
+function levenshtein(a,b){
+const dp=Array(a.length+1).fill(null).map(()=>Array(b.length+1).fill(0));
+for(let i=0;i<=a.length;i++) dp[i][0]=i;
+for(let j=0;j<=b.length;j++) dp[0][j]=j;
+for(let i=1;i<=a.length;i++){
+for(let j=1;j<=b.length;j++){
+dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:Math.min(dp[i-1][j]+1,dp[i][j-1]+1,dp[i-1][j-1]+1);
+}
+}
+return dp[a.length][b.length];
+}
 
-    const createFormBtn = document.getElementById("createFormBtn");
-    const peopleFieldsDiv = document.getElementById("peopleFields");
-    const formContainer = document.getElementById("formContainer");
-    const outputCard = document.getElementById("outputCard");
-    const sentencesContainer = document.getElementById("sentencesContainer");
-    const peopleForm = document.getElementById("peopleForm");
-    const numCabinsInput = document.getElementById("numCabins");
-    const cabinConfigDiv = document.getElementById("cabinConfig");
+function correctQuality(input){
+const word=input.trim().toLowerCase();
+if(ALLOWED_QUALITIES.includes(word)) return word;
+let best=null;
+let bestDist=Infinity;
+for(const q of ALLOWED_QUALITIES){
+const dist=levenshtein(word,q);
+if(dist<bestDist){
+bestDist=dist;
+best=q;
+}
+}
+return bestDist<=2?best:null;
+}
 
-    let cabinConfig = [];
+const createFormBtn=document.getElementById("createFormBtn");
+const peopleFieldsDiv=document.getElementById("peopleFields");
+const formContainer=document.getElementById("formContainer");
+const outputCard=document.getElementById("outputCard");
+const sentencesContainer=document.getElementById("sentencesContainer");
+const peopleForm=document.getElementById("peopleForm");
+const numCabinsInput=document.getElementById("numCabins");
+const cabinConfigDiv=document.getElementById("cabinConfig");
+const genderSelect=document.getElementById("groupGender");
+const clusterSelect=document.getElementById("clusterName");
+const cards=document.querySelectorAll(".card");
 
-    numCabinsInput.addEventListener("input", () => {
-        const numCabins = parseInt(numCabinsInput.value);
-        if (!numCabins || numCabins < 1) {
-          cabinConfigDiv.innerHTML = "";
-          return;
-        }
-        cabinConfigDiv.innerHTML = "";
-        for (let i = 1; i <= numCabins; i++) {
-          const div = document.createElement("div");
-          div.innerHTML = `
-            <label>Number of Kids in Cabin ${i}:</label>
-            <input type="number" min="1" name="kids_cabin_${i}" id="kids_cabin_${i}">
-          `;
-          cabinConfigDiv.appendChild(div);
-        }
-    });
+let cabinConfig=[];
 
-    createFormBtn.addEventListener("click", () => {
-        const introPhoto = document.getElementById("introPhoto");
-        if (introPhoto) introPhoto.remove();
-        const numCabins = parseInt(numCabinsInput.value);
-        if (!numCabins || numCabins < 1) return alert("Enter number of cabins.");
-        const cfg = [];
-        for (let i = 1; i <= numCabins; i++) {
-          const input = document.getElementById(`kids_cabin_${i}`);
-          if (!input) return alert(`Enter kids for cabin ${i}.`);
-          const kids = parseInt(input.value);
-          if (!kids || kids < 1) return alert(`Enter a valid number of kids for cabin ${i}.`);
-          cfg.push({ cabinId: String(i), numKids: kids });
-        }
-        cabinConfig = cfg;
-        peopleFieldsDiv.innerHTML = "";
-        formContainer.style.display = "block";
-        outputCard.style.display = "none";
-        cabinConfig.forEach(cabin => {
-          const h = document.createElement("h3");
-          h.textContent = `Cabin ${cabin.cabinId}`;
-          peopleFieldsDiv.appendChild(h);
-          for (let k = 1; k <= cabin.numKids; k++) {
-            const block = document.createElement("div");
-            block.className = "person-block";
-            block.innerHTML = `
-                <label>Camper ${k} Name:</label>
-                <input type="text" name="name_c${cabin.cabinId}_${k}" required>
+cards.forEach(card=>card.style.backgroundColor="#f6bd60");
 
-                <label>Quality 1:</label>
-                <input type="text" name="q1_c${cabin.cabinId}_${k}" required>
+genderSelect.addEventListener("change",()=>{
+const gender=genderSelect.value;
+const color=gender==="female"?"#f7b2c4":"#9ecae1";
+cards.forEach(card=>{card.style.backgroundColor=color;});
+clusterSelect.innerHTML=`<option value="" selected disabled>Select</option>`;
+CLUSTERS_BY_GENDER[gender].forEach(cluster=>{
+const option=document.createElement("option");
+option.value=cluster;
+option.textContent=cluster;
+clusterSelect.appendChild(option);
+});
+});
 
-                <label>Quality 2:</label>
-                <input type="text" name="q2_c${cabin.cabinId}_${k}" required>
+numCabinsInput.addEventListener("input",()=>{
+const numCabins=parseInt(numCabinsInput.value);
+if(!numCabins||numCabins<1){
+cabinConfigDiv.innerHTML="";
+return;
+}
+cabinConfigDiv.innerHTML="";
+for(let i=1;i<=numCabins;i++){
+const div=document.createElement("div");
+div.innerHTML=`
+<label>Number of Campers in ${clusterSelect.value || "Cabin"} ${i}:</label>
+<input type="number" min="1" id="kids_cabin_${i}">
+`;
+cabinConfigDiv.appendChild(div);
+}
+});
 
-                <label>Quality 3:</label>
-                <input type="text" name="q3_c${cabin.cabinId}_${k}" required>
-            `;
-            peopleFieldsDiv.appendChild(block);
-          }
-        });
-    });
+createFormBtn.addEventListener("click",()=>{
+const gender=genderSelect.value;
+const clusterName=clusterSelect.value;
+if(!gender) return alert("Select a gender.");
+if(!clusterName) return alert("Select a cluster.");
 
-    peopleForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const gender = document.getElementById("groupGender").value;
-        const cabinQualities = {};
-        cabinConfig.forEach(c => cabinQualities[c.cabinId] = new Set());
-        sentencesContainer.innerHTML = "";
-        for (const cabin of cabinConfig) {
-          for (let k = 1; k <= cabin.numKids; k++) {
-            const rawName = peopleForm[`name_c${cabin.cabinId}_${k}`].value;
-            const name = formatName(rawName);
-            const rawQualities = [
-                peopleForm[`q1_c${cabin.cabinId}_${k}`].value,
-                peopleForm[`q2_c${cabin.cabinId}_${k}`].value,
-                peopleForm[`q3_c${cabin.cabinId}_${k}`].value
-            ];
-            const corrected = [];
-            for (const q of rawQualities) {
-                const fixed = correctQuality(q);
-                if (!fixed) return alert(`"${q}" is not an allowed quality.`);
-                if (DISALLOWED_BY_GENDER[gender].includes(fixed)) return alert(`"${fixed}" is not allowed for this gender.`);
-                if (cabinQualities[cabin.cabinId].has(fixed)) return alert(`"${fixed}" is already used in cabin ${cabin.cabinId}. Choose a different word.`);
-                cabinQualities[cabin.cabinId].add(fixed);
-                corrected.push(fixed);
-            }
-            const sentences = corrected.map((q, idx) =>
-              buildSentence(name, q, gender, idx + 1)
-            );
-            const p = document.createElement("p");
-            p.className = "sentence";
-            p.textContent = sentences.join(" ");
-            sentencesContainer.appendChild(p);
-          }
-        }
-        outputCard.style.display = "block";
-    });
-    const genderSelect = document.getElementById("groupGender");
-    const cards = document.querySelectorAll(".card");
-    cards.forEach(card => card.style.backgroundColor = "#f6bd60");
-    genderSelect.addEventListener("change", () => {
-      const color =
-        genderSelect.value === "female" ? "#f7b2c4" : "#9ecae1";
+const introPhoto=document.getElementById("introPhoto");
+if(introPhoto) introPhoto.remove();
 
-      cards.forEach(card => {
-        card.style.backgroundColor = color;
-      });
-    });
-    peopleForm.addEventListener("keydown", (e) => {
-      if (e.key !== "Enter") return;
+const numCabins=parseInt(numCabinsInput.value);
+if(!numCabins||numCabins<1) return alert("Enter number of cabins.");
 
-      const inputs = Array.from(
-        peopleForm.querySelectorAll("input[type='text']")
-      );
+const cfg=[];
+for(let i=1;i<=numCabins;i++){
+const input=document.getElementById(`kids_cabin_${i}`);
+if(!input) return alert(`Enter kids for ${clusterName} ${i}.`);
+const kids=parseInt(input.value);
+if(!kids||kids<1) return alert(`Enter a valid number of kids for ${clusterName} ${i}.`);
+cfg.push({cabinId:String(i),numKids:kids});
+}
 
-      const index = inputs.indexOf(document.activeElement);
-      if (index === -1) return;
+cabinConfig=cfg;
+peopleFieldsDiv.innerHTML="";
+formContainer.style.display="block";
+outputCard.style.display="none";
 
-      e.preventDefault();
+cabinConfig.forEach(cabin=>{
+const h=document.createElement("h3");
+h.textContent=`${clusterName} ${cabin.cabinId}`;
+peopleFieldsDiv.appendChild(h);
 
-      const next = inputs[index + 1];
-      if (next) {
-        next.focus();
-      }
-    });
+for(let k=1;k<=cabin.numKids;k++){
+const block=document.createElement("div");
+block.className="person-block";
+block.innerHTML=`
+<label>Camper ${k} Name:</label>
+<input type="text" name="name_c${cabin.cabinId}_${k}" required>
 
+<label>CQ 1:</label>
+<input type="text" name="q1_c${cabin.cabinId}_${k}" required>
 
+<label>CQ 2:</label>
+<input type="text" name="q2_c${cabin.cabinId}_${k}" required>
+
+<label>CQ 3:</label>
+<input type="text" name="q3_c${cabin.cabinId}_${k}" required>
+`;
+peopleFieldsDiv.appendChild(block);
+}
+});
+});
+
+peopleForm.addEventListener("submit",(e)=>{
+e.preventDefault();
+
+const gender=genderSelect.value;
+const clusterName=clusterSelect.value;
+if(!gender) return alert("Select a gender.");
+if(!clusterName) return alert("Select a cluster.");
+
+const cabinQualities={};
+cabinConfig.forEach(c=>cabinQualities[c.cabinId]=new Set());
+
+sentencesContainer.innerHTML="";
+
+for(const cabin of cabinConfig){
+const outputBlock=document.createElement("div");
+outputBlock.className="output-block";
+
+const cabinHeader=document.createElement("h3");
+cabinHeader.className="cabin-title";
+cabinHeader.innerHTML=`<strong>${clusterName} ${cabin.cabinId}</strong>`;
+outputBlock.appendChild(cabinHeader);
+
+for(let k=1;k<=cabin.numKids;k++){
+const rawName=peopleForm[`name_c${cabin.cabinId}_${k}`].value;
+const name=formatName(rawName);
+
+const rawQualities=[
+peopleForm[`q1_c${cabin.cabinId}_${k}`].value,
+peopleForm[`q2_c${cabin.cabinId}_${k}`].value,
+peopleForm[`q3_c${cabin.cabinId}_${k}`].value
+];
+
+const corrected=[];
+
+for(const q of rawQualities){
+const fixed=correctQuality(q);
+if(!fixed) return alert(`"${q}" is not an allowed quality.`);
+if(DISALLOWED_BY_GENDER[gender].includes(fixed)) return alert(`"${fixed}" is not allowed for this gender.`);
+if(cabinQualities[cabin.cabinId].has(fixed)) return alert(`"${fixed}" is already used in ${clusterName} ${cabin.cabinId}. Choose a different word.`);
+cabinQualities[cabin.cabinId].add(fixed);
+corrected.push(fixed);
+}
+
+const sentences=corrected.map((q,idx)=>buildSentence(name,q,gender,idx+1));
+
+const p=document.createElement("p");
+p.className="sentence";
+p.textContent=sentences.join(" ");
+outputBlock.appendChild(p);
+}
+
+sentencesContainer.appendChild(outputBlock);
+}
+
+outputCard.style.display="block";
+});
+
+peopleForm.addEventListener("keydown",(e)=>{
+if(e.key!=="Enter") return;
+const inputs=Array.from(peopleForm.querySelectorAll("input[type='text']"));
+const index=inputs.indexOf(document.activeElement);
+if(index===-1) return;
+e.preventDefault();
+const next=inputs[index+1];
+if(next) next.focus();
+});
 </script>
 
 </body>
